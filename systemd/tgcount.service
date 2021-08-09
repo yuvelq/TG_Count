@@ -1,0 +1,18 @@
+[Unit]
+Description=Server Status service
+# To make the network-online.target available
+# systemctl enable systemd-networkd-wait-online.service
+
+After=network-online.target syslog.target
+Wants=network-online.target
+
+[Service]
+User=root
+WorkingDirectory=/opt/tgcount
+RestartSec=3
+ExecStart=python3 tgcount.py
+Restart=always
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
