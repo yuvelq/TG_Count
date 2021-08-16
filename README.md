@@ -3,6 +3,7 @@
 - It includes two templates located inside the templates file, you can choose wich of them you want to use in the configuration section of tgcount.py. 
   - tgcount.php works with [HBMonv2](https://github.com/sp2ong/HBMonv2).
   - stand_alone.php is the standalone version.  
+- It needs a logging level of INFO at least.  
 - It has been tested on Debian 10 and it's release as beta.  
 
 **Installation**
