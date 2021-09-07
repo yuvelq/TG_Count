@@ -10,7 +10,8 @@
 **Installation**
 ```
 cd /opt    
-sudo git clone https://github.com/yuvelq/tgcount.git  
+sudo git clone https://github.com/yuvelq/TG_Count.git
+cd TG_Count
 ```
 Modify the configuration section at the begining of **tgcount.py** to match with your configuration, you can use the editor of your preference.  
 ```
@@ -63,7 +64,8 @@ Now the installation is completed, thank you for install this script any feedbac
 **Instalación**
 ```
 cd /opt    
-sudo git clone https://github.com/yuvelq/tgcount.git  
+sudo git clone https://github.com/yuvelq/TG_Count.git  
+cd TG_Count
 ```
 Modifica la sección de configuración al inicio de **tgcount.py** para que se adapten a tu sistema, puedes utilizar un editor de texto de tu preferencia.  
 ```
