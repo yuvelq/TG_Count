@@ -1,14 +1,13 @@
 [Unit]
-Description=Server Status service
-# To make the network-online.target available
-# systemctl enable systemd-networkd-wait-online.service
+Description=TG_Count service
 
-After=network-online.target syslog.target
+After=network-online.target
 Wants=network-online.target
 
 [Service]
 User=root
-WorkingDirectory=/opt/tgcount
+Type=simple
+WorkingDirectory=/opt/TG_Count
 RestartSec=3
 ExecStart=python3 tgcount.py
 Restart=on-failure
