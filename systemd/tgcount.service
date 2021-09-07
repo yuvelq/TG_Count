@@ -7,7 +7,7 @@ Wants=network-online.target
 [Service]
 User=root
 Type=simple
-WorkingDirectory=/opt/tgcount
+WorkingDirectory=/opt/TG_Count
 RestartSec=3
 ExecStart=python3 tgcount.py
 Restart=on-failure
