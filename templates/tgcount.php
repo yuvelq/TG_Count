@@ -39,7 +39,7 @@ include_once 'include/config.php';
 <br>
 <B><span style="text-align: center;">This information is updated every 3 minutes, QSO time in minutes.</B><br> 
 Only takes into account a QSO of the current day that lasts more than 5 seconds.<br>
-Single Callsing or FreeDMR with high QSO is a Bridge. <br><br> Thank you to Christian OA4DOA for making this code. <br></span>
+Single Callsing or FreeDMR with high QSO is a Bridge.<br></span>
 </fieldset></div><br>
 
 <p style="text-align: center;"><span style="text-align: center;">
