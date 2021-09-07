@@ -5,7 +5,7 @@
   - stand_alone.php is the standalone version.  
 - It needs a log level of INFO at least.  
 - It has been tested on Debian 10. 
-- This is a beta release. 
+- This is a Beta release. 
 
 **Installation**
 ```
@@ -48,5 +48,58 @@ Add this after the last button configured:
 <a href="count.php"><button class="button link">&nbsp;Most Used TG&nbsp;</button></a>
 &nbsp;
 ```
+Now the installation is completed, thank you for install this script any feedback is welcome. 
+73! 
+<br/><br/><br/><br/>
+# TG Count
+- Este script genera un archivo PHP con estadisticas de los TG mas utilizados y los indicativos mas vistos.  
+- Se incluyen dos plantillas que estan ubicadas en la carpeta templates, se puede seleccionar cual utilizar en la sección de configuracion de tgcount.py. 
+  - tgcount.php trabaja con [HBMonv2](https://github.com/sp2ong/HBMonv2).
+  - stand_alone.php trabaja independientemente.  
+- Se necesita tener un nivel the logbook de por lo menos INFO.  
+- Este script ha sido probado en Debian 10. 
+- Esta es una version Beta. 
 
- 
+**Instalación**
+```
+cd /opt    
+sudo git clone https://github.com/yuvelq/tgcount.git  
+```
+Modifica la sección de configuración al inicio de **tgcount.py** para que se adapten a tu sistema, puedes utilizar un editor de texto de tu preferencia.  
+```
+sudo nano tgcount.py
+``` 
+Si tienes activada la opción de descarga en el servidor FreeDMR, cambia la opción DOWNLOAD_FILES a False.
+>DOWNLOAD_FILES = False
+```
+sudo cp systemd/tgcount.service /lib/systemd/system  
+```
+Si quieres que tgcount inicie automáticamente después de reiniciar el sistema.
+```
+sudo systemctl enable tgcount.service 
+```
+Puedes iniciar, detener y reiniciar tgcount con los siguientes comandos:
+```
+Iniciar:
+sudo systemctl start tgcount.service
+
+Detener:
+sudo systemctl stop tgcount.service
+
+Reiniciar:
+sudo systemctl restart tgcount.service
+```
+El último paso es agregar el botón de tgcount a HBMonv2, este paso no es necesario si solo vas a utilizar la plantilla independiente. 
+
+Modificamos el archivo buttons.html, usualmente lo puedes localizar en /var/www/html:  
+```
+sudo nano buttons.html
+```
+Agregamos las siguientes líneas al final de los botones ya configurados: 
+```
+&nbsp;
+<a href="count.php"><button class="button link">&nbsp;Most Used TG&nbsp;</button></a>
+&nbsp;
+```
+Con eso finalizamos la instalación, gracias por utilizar este script, cualquiera comentario es bienvenido. 
+73! 
