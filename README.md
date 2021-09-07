@@ -101,5 +101,5 @@ Agregamos las siguientes líneas al final de los botones ya configurados:
 <a href="count.php"><button class="button link">&nbsp;Most Used TG&nbsp;</button></a>
 &nbsp;
 ```
-Con eso finalizamos la instalación, gracias por utilizar este script, cualquiera comentario es bienvenido.  
+Con eso finalizamos la instalación, gracias por utilizar este script, cualquier comentario es bienvenido.  
 73!  
