@@ -26,7 +26,7 @@ LOG_NAME    = "freedmr.log"
 SERVER_IN_DOCKER = False
 
 # Select this to False if you have been enabled the download option in the FReeDMR server.
-DOWNLOAD_FILES = False
+DOWNLOAD_FILES = True
 
 # Files and the time to update in "DAYS".
 USER_URL     = "https://www.radioid.net/static/user.csv"
