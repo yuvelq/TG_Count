@@ -3,8 +3,9 @@
 - It includes two templates located inside the templates file, you can choose wich of them you want to use in the configuration section of tgcount.py. 
   - tgcount.php works with [HBMonv2](https://github.com/sp2ong/HBMonv2).
   - stand_alone.php is the standalone version.  
-- It needs a logging level of INFO at least.  
-- It has been tested on Debian 10 and it's release as beta.  
+- It needs a log level of INFO at least.  
+- It has been tested on Debian 10. 
+- This is a beta release. 
 
 **Installation**
 ```
@@ -41,6 +42,11 @@ Modify the buttons.html, usually it's located inside /var/www/html:
 ```
 sudo nano buttons.html
 ```
+Add this after the last button configured: 
+```
+&nbsp;
+<a href="count.php"><button class="button link">&nbsp;Most Used TG&nbsp;</button></a>
+&nbsp;
+```
 
-sudo systemctl start tgcount.service  
  
