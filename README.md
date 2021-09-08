@@ -1,5 +1,6 @@
 # TG Count  
 - This script generates a PHP file with stats for the most used TG and the most seen callsings.  
+- It works with FreeDMR logbook and also with 'lastheard.log' from HBMonV2, if you are running in separate servers.  
 - It includes two templates located inside the templates file, you can choose wich of them you want to use in the configuration section of tgcount.py.  
   - tgcount.php works with [HBMonv2](https://github.com/sp2ong/HBMonv2).  
   - stand_alone.php is the standalone version.  
@@ -53,7 +54,8 @@ Now the installation is completed, thank you for install this script any feedbac
 73! 
 <br/><br/><br/><br/>
 # TG Count
-- Este script genera un archivo PHP con estadisticas de los TG mas utilizados y los indicativos mas vistos.  
+- Este script genera un archivo PHP con estadisticas de los TG mas utilizados y los indicativos mas vistos. 
+- El script funciona con el logbook del servidor FreeDMR y también con 'lastheard.log' de HBMon esto es útil cuando funcionan es servidores distintos.  
 - Se incluyen dos plantillas que estan ubicadas en la carpeta templates, se puede seleccionar cual utilizar en la sección de configuracion de tgcount.py. 
   - tgcount.php trabaja con [HBMonv2](https://github.com/sp2ong/HBMonv2).
   - stand_alone.php trabaja independientemente.  
