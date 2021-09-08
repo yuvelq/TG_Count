@@ -129,7 +129,7 @@ while True:
                     if call_id in VANISH: continue
                     tg_number = line_split[3].split(',')[6][2:]
                     
-                else
+                else:
                     if '*CALL END*' not in line: continue
                     line_split = line.split()
                     if line_split[1] != today: continue
