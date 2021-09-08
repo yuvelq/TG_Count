@@ -103,7 +103,7 @@ while True:
     tg_count = {}
     count_lst = []
 
-    if SERVER_IN_DOCKER == True or LOG_NAME == 'lastheard.log':
+    if SERVER_IN_DOCKER == True:
         today = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
     else:
         today = datetime.strftime(datetime.now(), '%Y-%m-%d')
@@ -121,8 +121,7 @@ while True:
             for line in log:
                 if LOG_NAME == 'lastheard.log':
                     line_split = line.split(' ')
-                    today_utc = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
-                    if line_split[0] != today_utc: continue
+                    if line_split[0] != today: continue
                     qso_time = float(line_split[2].split(',')[1])
                     if qso_time < 6 : continue
                     call_id = ''.join(line_split[3:]).split(',')[8]
