@@ -13,12 +13,12 @@ __credits__    = 'Norman Williams, M6NBP'
 __maintainer__ = 'Christian OA4DOA'
 __email__      = 'christianyuvel@dmr-peru.pe'
 __license__    = 'GNU GPLv3'
-__version__    = '1.4 Beta'
+__version__    = '1.4.1 Beta'
 
 
 #################################### Config Here #########################################
 
-# Path and and name of the log file
+# Path and and name of the log file, you can use also the 'lastheard.log' when using HBMon in a different server.
 PATH_TO_LOG = "./"
 LOG_NAME    = "freedmr.log"
 
@@ -103,11 +103,11 @@ while True:
     tg_count = {}
     count_lst = []
 
-    if SERVER_IN_DOCKER == False:
-        today = datetime.strftime(datetime.now(), '%Y-%m-%d')
-    else:
+    if SERVER_IN_DOCKER == True or LOG_NAME == 'lastheard.log':
         today = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
-
+    else:
+        today = datetime.strftime(datetime.now(), '%Y-%m-%d')
+        
     if DOWNLOAD_FILES == True:
         files = ((USER_URL,REFRESH_USER), (TG_NAME_URL,REFRESH_TG_NAME), (SUBSCRIBER_URL,REFRESH_LOCAL))
         for url,update in files:
@@ -119,14 +119,25 @@ while True:
     try:
         with Path(PATH_TO_LOG,LOG_NAME).open() as log:
             for line in log:
-                if '*CALL END*' not in line: continue
-                line_split = line.split()
-                if line_split[1] != today: continue
-                if line_split[11][1:-1] in VANISH: continue
-                tg_number = line_split[-5][1:-2]
-                qso_time = float(line_split[-1])
-                call_id = line_split[10]
-                if qso_time < 6 : continue
+                if LOG_NAME == 'lastheard.log':
+                    line_split = line.split(' ')
+                    today_utc = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
+                    if line_split[0] != today_utc: continue
+                    qso_time = float(line_split[2].split(',')[1])
+                    if qso_time < 6 : continue
+                    call_id = ''.join(line_split[3:]).split(',')[8]
+                    if call_id in VANISH: continue
+                    tg_number = line_split[3].split(',')[6][2:]
+                    
+                else
+                    if '*CALL END*' not in line: continue
+                    line_split = line.split()
+                    if line_split[1] != today: continue
+                    if line_split[11][1:-1] in VANISH: continue
+                    tg_number = line_split[-5][1:-2]
+                    qso_time = float(line_split[-1])
+                    call_id = line_split[10]
+                    if qso_time < 6 : continue
 
                 if tg_number not in tg_count :
                     tg_count[tg_number] = {'count':1, 'qso_count':qso_time, 'call_sign':{}}
@@ -267,9 +278,9 @@ while True:
     
 
     if DOWNLOAD_FILES == True:    
-        final_tup = (tg_count, count_lst, VANISH, id_lst, id_dict, final_tg)
+        final_tup = (tg_count, count_lst, id_lst, id_dict, final_tg)
     else:
-        final_tup = (tg_count, count_lst, VANISH, final_tg)
+        final_tup = (tg_count, count_lst, final_tg)
 
     for ite in final_tup:
         del ite
