@@ -13,7 +13,7 @@ __credits__    = 'Norman Williams, M6NBP'
 __maintainer__ = 'Christian OA4DOA'
 __email__      = 'christianyuvel@dmr-peru.pe'
 __license__    = 'GNU GPLv3'
-__version__    = '1.4.1 Beta'
+__version__    = '1.5.0 Beta'
 
 
 #################################### Config Here #########################################
@@ -48,7 +48,7 @@ WRITE_FILE    = "count.php"
 TIME_TO_WRITE = 3
 
 # The IDs in this list won't be take into account for TG count.
-VANISH = ('1234567',)
+VANISH = (1234567,)
 
 ################################## End of Config #######################################
 
@@ -86,9 +86,11 @@ def file_update(url,update):
                 with open(file, 'wb') as f:
                     f.write(r.content)
                 print(f'{file} downloaded correctly.')
+                global id_dict
+                id_dict = {}
             elif r.status_code == 404:
                 print(f"We couldn't find {file_name} in the especified URL.")
-                quit()  
+                quit()
             else:
                 print(f'{r.status_code}\nWe found an unexpected error.')
                 quit()
@@ -97,18 +99,45 @@ def file_update(url,update):
             print(f"{err}\nWe can't continue.")
             quit()
 
+# Resolve DMR ID
+def resolve_cs(dmr_id):
+    if not isinstance(dmr_id,int):
+        return dmr_id
+    else:
+        if dmr_id in id_dict:
+            return id_dict[dmr_id]
+        else:
+            return 'N0CALL'
+
+
+# General variables
+last_line = None
+today = None
 
 while True:
-    # General variables
-    tg_count = {}
-    count_lst = []
+    
+    date_utc = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
+    date_sys = datetime.strftime(datetime.now(), '%Y-%m-%d')
 
-    if SERVER_IN_DOCKER == True:
-        today = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
+    if not today:
+        tg_count = {}
+        id_dict = {}
+        if SERVER_IN_DOCKER:
+            today = date_utc
+        else:
+            today = date_sys        
     else:
-        today = datetime.strftime(datetime.now(), '%Y-%m-%d')
-        
-    if DOWNLOAD_FILES == True:
+        if SERVER_IN_DOCKER:
+            if today != date_utc:
+                today = None
+                continue
+        else:
+            if today != date_sys:
+                today = None
+                continue
+
+
+    if DOWNLOAD_FILES:
         files = ((USER_URL,REFRESH_USER), (TG_NAME_URL,REFRESH_TG_NAME), (SUBSCRIBER_URL,REFRESH_LOCAL))
         for url,update in files:
           file_update(url,update)
@@ -118,25 +147,31 @@ while True:
 
     try:
         with Path(PATH_TO_LOG,LOG_NAME).open() as log:
+            if last_line:
+                    log.seek(last_line)
+
             for line in log:
                 if LOG_NAME == 'lastheard.log':
-                    line_split = line.split(' ')
+                    line_split = line.rstrip().split()
                     if line_split[0] != today: continue
                     qso_time = float(line_split[2].split(',')[1])
                     if qso_time < 6 : continue
-                    call_id = ''.join(line_split[3:]).split(',')[8]
+                    call_id = int(''.join(line_split[3:]).split(',')[8])
                     if call_id in VANISH: continue
-                    tg_number = line_split[3].split(',')[6][2:]
-                    
+                    tg_number = int(line_split[3].split(',')[6][2:])
+
                 else:
                     if '*CALL END*' not in line: continue
-                    line_split = line.split()
+                    line_split = line.rstrip().split()
                     if line_split[1] != today: continue
                     if line_split[11][1:-1] in VANISH: continue
-                    tg_number = line_split[-5][1:-2]
+                    tg_number = int(line_split[-5][1:-2])
                     qso_time = float(line_split[-1])
-                    call_id = line_split[10]
                     if qso_time < 6 : continue
+                    call_id = line_split[10]
+                    if call_id.isdigit():
+                        call_id = int(line_split[10])
+
 
                 if tg_number not in tg_count :
                     tg_count[tg_number] = {'count':1, 'qso_count':qso_time, 'call_sign':{}}
@@ -148,56 +183,33 @@ while True:
                     tg_count[tg_number]['call_sign'][call_id] = 1
                 else:
                     tg_count[tg_number]['call_sign'][call_id] += 1
-                    
+            last_line = log.tell()
+        del log
+
     except FileNotFoundError as err:
         print(f'{err}\nPlease check the name and the path to the log file and try again.\nBye')
         quit()
 
 
-    if DOWNLOAD_FILES == True:
-        # Make a list  of the DMR ID found.
-        id_lst = []
-        for tg in tg_count:
-            for dmr_id in tg_count[tg]['call_sign']:
-                if dmr_id not in id_lst:
-                    id_lst.append(dmr_id)
+    if DOWNLOAD_FILES:
+        if not id_dict:
+            # Make a dictionary of the IDs
+            with open(USER_URL.split('/')[-1], encoding='utf-8') as csv:
+                data_usercsv = reader(csv)
+                for row in data_usercsv:
+                    if len(row)  < 7 or not row[0].isdigit(): continue
+                    if row[0] not in id_dict:
+                        id_dict[int(row[0])] = row[1]
+                del data_usercsv
 
-        # Make a dictionary of the found IDs
-        id_dict = {}
-        with open(USER_URL.split('/')[-1], encoding='utf-8') as csv:
-            data_usercsv = reader(csv)
-            for row in data_usercsv:
-                if len(row) < 7: continue
-                if row[0] in id_lst:
-                    id_dict[row[0]] = row[1]
-                    ## print(id_dict)
-            del data_usercsv
-
-        # Make a dictionary with the user IDs
-        with open(SUBSCRIBER_URL.split('/')[-1],encoding='utf-8') as local_json:
-            data_localjson = jload(local_json)
-            for user in data_localjson['results']:
-                id_ = str(user['id'])
-                if id_ in id_lst:
-                    id_dict[id_] = user['callsign']
-            del data_localjson
-
-    # Translate the DMR ID to callsing in the main dictionary.
-    for tg_num in tg_count:
-        for id_num,value in list(tg_count[tg_num]["call_sign"].items()):
-            if DOWNLOAD_FILES == True:
-                if id_num in id_dict:
-                    tg_count[tg_num]['call_sign'][id_dict[id_num]] = value
-                    del tg_count[tg_num]['call_sign'][id_num]
-                else:
-                    tg_count[tg_num]['call_sign']['N0CALL'] = value
-                    del tg_count[tg_num]['call_sign'][id_num]
-
-            else:
-                if id_num[-1].isalpha() == True: continue
-                else:
-                    tg_count[tg_num]['call_sign']['N0CALL'] = value
-                    del tg_count[tg_num]['call_sign'][id_num]
+            # Make a dictionary with the user IDs
+            with open(SUBSCRIBER_URL.split('/')[-1],encoding='utf-8') as local_json:
+                data_localjson = jload(local_json)
+                for user in data_localjson['results']:
+                    id_ = user['id']
+                    if id_ not in id_dict:
+                        id_dict[id_] = user['callsign']
+                del data_localjson
 
 
     # Sort the callsing for every TG
@@ -206,27 +218,25 @@ while True:
         for key,value in tg_count[tg_name]['call_sign'].items():
             temp_.append((value,key))
         temp_.sort(reverse=True)
-        tg_count[tg_name]['call_sort'] = []
-        for value,key in temp_:
-            tg_count[tg_name]['call_sort'].append(key)
-        del tg_count[tg_name]['call_sign']
 
-    #Sort the dictionary for the top TG
-    for key, value in tg_count.items():
-        count_lst.append((value['qso_count'],key))
-        count_lst.sort(reverse=True)
+        tg_count[tg_name]['call_sort'] = []
+        for value,key in temp_[:4]:
+            tg_count[tg_name]['call_sort'].append(resolve_cs(key))
+
+
+    # Sort the dictionary for the top TG
+    count_lst =sorted([(value['qso_count'],key) for key,value in tg_count.items()],reverse=True)
 
     #Make a list of the 20 first TG
-    final_tg = []
-    for value,key in count_lst[:20] :
-        final_tg.append(key)
+    final_tg =[key  for value,key in count_lst[:20]]
 
-    
+
+    # Resolve TG name
     with open(TG_NAME_URL.split('/')[-1], encoding='utf-8') as tg_json:
         data_tgjson = jload(tg_json)
         for tg_id in data_tgjson["results"]:
-            if str(tg_id['id']) in final_tg :
-                tg_count[str(tg_id['id'])]['tg_name'] = tg_id['callsign']
+            if tg_id['id'] in final_tg and 'tg_name' not in tg_count[tg_id['id']] :
+                tg_count[tg_id['id']]['tg_name'] = tg_id['callsign']
         del data_tgjson
 
     try:
@@ -253,10 +263,10 @@ while True:
         for line in template_lines[:header_end] :
             new.write(line)
 
-        for tg_id in final_tg :
+        for tg_id in final_tg:
             qso_count = tg_count[tg_id]['count']
             qso_time = min_sec(round(tg_count[tg_id]['qso_count']/60, 2))
-            user = " - ".join(tg_count[tg_id]['call_sort'][:4])
+            user = " - ".join(tg_count[tg_id]['call_sort'])
 
             new.write('    <tr>\n')
             new.write(f'        <td>&nbsp;<b>{tg_id}</b>&nbsp;</td>\n')
@@ -273,13 +283,13 @@ while True:
         for line in template_lines[table_end:]:
             new.write(line)
         
-        del template_lines
-    
+    del template_lines
 
-    if DOWNLOAD_FILES == True:    
-        final_tup = (tg_count, count_lst, id_lst, id_dict, final_tg)
+
+    if DOWNLOAD_FILES:
+        final_tup = (count_lst, final_tg)
     else:
-        final_tup = (tg_count, count_lst, final_tg)
+        final_tup = (count_lst, final_tg)
 
     for ite in final_tup:
         del ite
