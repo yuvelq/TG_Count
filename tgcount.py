@@ -86,8 +86,8 @@ def file_update(url,update):
                 with open(file, 'wb') as f:
                     f.write(r.content)
                 print(f'{file} downloaded correctly.')
-                global id_dict
-                id_dict = {}
+                global today
+                today = None
             elif r.status_code == 404:
                 print(f"We couldn't find {file_name} in the especified URL.")
                 quit()
@@ -115,6 +115,14 @@ last_line = None
 today = None
 
 while True:
+
+    if DOWNLOAD_FILES:
+        files = ((USER_URL,REFRESH_USER), (TG_NAME_URL,REFRESH_TG_NAME), (SUBSCRIBER_URL,REFRESH_LOCAL))
+        for url,update in files:
+          file_update(url,update)
+    else:
+        file_update(TG_NAME_URL,REFRESH_TG_NAME)
+
     
     date_utc = datetime.strftime(datetime.utcnow(), '%Y-%m-%d')
     date_sys = datetime.strftime(datetime.now(), '%Y-%m-%d')
@@ -122,6 +130,7 @@ while True:
     if not today:
         tg_count = {}
         id_dict = {}
+        last_line = None
         if SERVER_IN_DOCKER:
             today = date_utc
         else:
@@ -135,14 +144,6 @@ while True:
             if today != date_sys:
                 today = None
                 continue
-
-
-    if DOWNLOAD_FILES:
-        files = ((USER_URL,REFRESH_USER), (TG_NAME_URL,REFRESH_TG_NAME), (SUBSCRIBER_URL,REFRESH_LOCAL))
-        for url,update in files:
-          file_update(url,update)
-    else:
-        file_update(TG_NAME_URL,REFRESH_TG_NAME)
 
 
     try:
