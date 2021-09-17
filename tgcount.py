@@ -25,7 +25,7 @@ LOG_NAME    = "freedmr.log"
 # If the server is running in a Docker set this to True.
 SERVER_IN_DOCKER = False
 
-# Select this to False if you have been enabled the download option in the FReeDMR server.
+# Change this to False if you have been enabled the download option in the FReeDMR server.
 DOWNLOAD_FILES = True
 
 # Files and the time to update in "DAYS".
@@ -225,12 +225,12 @@ while True:
     for tg_name in tg_count:
         temp_ = []
         for key,value in tg_count[tg_name]['call_sign'].items():
-            temp_.append((value,key))
-        temp_.sort(reverse=True)
+            temp_.append((value,resolve_cs(key)))
 
+        sorted(temp_,reverse=True)
         tg_count[tg_name]['call_sort'] = []
         for value,key in temp_[:4]:
-            tg_count[tg_name]['call_sort'].append(resolve_cs(key))
+            tg_count[tg_name]['call_sort'].append(key)
 
 
     # Sort the dictionary for the top TG
@@ -268,7 +268,7 @@ while True:
         quit()
 
 
-    with Path(PATH_TO_WRITE,WRITE_FILE).open('+w') as new :
+    with Path(PATH_TO_WRITE,WRITE_FILE).open('+w',encoding='utf-8') as new :
         for line in template_lines[:header_end] :
             new.write(line)
 
