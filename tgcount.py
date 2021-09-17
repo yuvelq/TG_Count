@@ -1,6 +1,6 @@
 from datetime import datetime
 from json import load as jload
-from os.path import getmtime
+from os.path import getmtime, getsize
 from pathlib import Path
 from time import sleep, time
 import sys, signal
@@ -86,8 +86,8 @@ def file_update(url,update):
                 with open(file, 'wb') as f:
                     f.write(r.content)
                 print(f'{file} downloaded correctly.')
-                global today
-                today = None
+                global id_dict
+                id_dict = {}
             elif r.status_code == 404:
                 print(f"We couldn't find {file_name} in the especified URL.")
                 quit()
@@ -113,6 +113,8 @@ def resolve_cs(dmr_id):
 # General variables
 last_line = None
 today = None
+id_dict = {}
+size_ref = None
 
 while True:
 
@@ -129,8 +131,6 @@ while True:
 
     if not today:
         tg_count = {}
-        id_dict = {}
-        last_line = None
         if SERVER_IN_DOCKER:
             today = date_utc
         else:
@@ -144,6 +144,14 @@ while True:
             if today != date_sys:
                 today = None
                 continue
+
+    # Reset pointer by delta size
+    file_size = getsize(Path(PATH_TO_LOG,LOG_NAME))
+    if not size_ref:
+        size_ref = file_size
+    elif not file_size or size_ref > file_size:
+        last_line = None
+        size_ref = file_size
 
 
     try:
