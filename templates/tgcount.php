@@ -40,6 +40,10 @@ include_once 'include/config.php';
 <B><span style="text-align: center;">This information is updated every 3 minutes, QSO time in minutes.</B><br> 
 Only takes into account a QSO of the current day that lasts more than 5 seconds.<br>
 Single Callsing or FreeDMR with high QSO is a Bridge.<br></span>
+<p style="text-align: right;">
+<?php
+echo "last updated: ".date("d F Y H:i", filemtime("count.php"));
+?>&nbsp;</p>
 </fieldset></div><br>
 
 <p style="text-align: center;"><span style="text-align: center;">
