@@ -111,7 +111,6 @@ def resolve_cs(dmr_id):
 
 
 # General variables
-last_line = None
 today = None
 id_dict = {}
 size_ref = None
@@ -149,10 +148,13 @@ while True:
     file_size = getsize(Path(PATH_TO_LOG,LOG_NAME))
     if not size_ref:
         size_ref = file_size
-    elif not file_size or size_ref > file_size:
         last_line = None
-        size_ref = file_size
-
+    else:
+        if not file_size or size_ref > file_size:
+            size_ref = file_size
+            last_line = None
+        else:
+            size_ref = file_size
 
     try:
         with Path(PATH_TO_LOG,LOG_NAME).open() as log:
