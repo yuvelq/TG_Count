@@ -32,7 +32,7 @@ include_once 'include/config.php';
         <th style='width: 350px;'>Talk Group Name</th>
         <th style='width: 120px;'>Number of QSO</th>
         <th style='width: 120px;'>Total QSO Time</th>
-        <th style='width: 320px;'>Most Seen Callsing</th>
+        <th style='width: 320px;'>Most Seen Callsign</th>
     </tr>
 
 </table>
