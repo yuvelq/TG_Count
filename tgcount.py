@@ -7,50 +7,21 @@ import sys, signal
 from csv import reader
 from requests import get
 
+
 __author__     = 'Christian Quiroz - OA4DOA'
 __copyright__  = 'Copyright (c) Christian Quiroz, OA4DOA 2021'
 __credits__    = 'Norman Williams, M6NBP'
 __maintainer__ = 'Christian OA4DOA'
 __email__      = 'christianyuvel@dmr-peru.pe'
 __license__    = 'GNU GPLv3'
-__version__    = '1.5.0 Beta'
+__version__    = '1.6.0 Beta'
 
 
-#################################### Config Here #########################################
-
-# Path and and name of the log file, you can use also the 'lastheard.log' when using HBMon in a different server.
-PATH_TO_LOG = "./"
-LOG_NAME    = "freedmr.log"
-
-# If the server is running in a Docker set this to True.
-SERVER_IN_DOCKER = False
-
-# Change this to False if you have been enabled the download option in the FReeDMR server.
-DOWNLOAD_FILES = True
-
-# Files and the time to update in "DAYS".
-USER_URL     = "https://www.radioid.net/static/user.csv"
-REFRESH_USER = 7
-
-TG_NAME_URL     = "http://downloads.freedmr.uk/downloads/talkgroup_ids.json"
-REFRESH_TG_NAME = 7
-
-SUBSCRIBER_URL = "http://downloads.freedmr.uk/downloads/local_subscriber_ids.json"
-REFRESH_LOCAL  = 15
-
-# Path and file name of the template that we'll use to write PHP file.
-PATH_TO_TEMPLATE = "./templates"
-TEMPLATE_NAME    = "tgcount.php"
-
-# Path and file name to where we'll write the PHP and the time in "MINUTES" to update the file. 
-PATH_TO_WRITE = "./"
-WRITE_FILE    = "count.php"
-TIME_TO_WRITE = 3
-
-# The IDs in this list won't be take into account for TG count.
-VANISH = (1234567,)
-
-################################## End of Config #######################################
+try: 
+    from config import *
+except:
+    print('config.py file is missing.')
+    quit()
 
 
 # Close gently
@@ -58,6 +29,7 @@ def signal_handler(signal, frame):
     print('\nBye')
     sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
+
 
 # Show time in a friendly format
 def min_sec(f):
@@ -68,6 +40,7 @@ def min_sec(f):
     else:
         second = seco
     return f'{minu}:{second}'
+
 
 # Download or update the source files
 def file_update(url,update):
@@ -98,6 +71,7 @@ def file_update(url,update):
         except Exception as err:
             print(f"{err}\nWe can't continue.")
             quit()
+
 
 # Resolve DMR ID
 def resolve_cs(dmr_id):
@@ -191,9 +165,10 @@ while True:
                     tg_count[tg_number]['qso_count'] += qso_time
 
                 if call_id not in tg_count[tg_number]['call_sign']:
-                    tg_count[tg_number]['call_sign'][call_id] = 1
+                    tg_count[tg_number]['call_sign'][call_id] = qso_time
                 else:
-                    tg_count[tg_number]['call_sign'][call_id] += 1
+                    tg_count[tg_number]['call_sign'][call_id] += qso_time
+
             last_line = log.tell()
         del log
 

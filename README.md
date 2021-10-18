@@ -13,10 +13,11 @@
 cd /opt    
 sudo git clone https://github.com/yuvelq/TG_Count.git
 cd TG_Count
+sudo cp config.sample.py config.py
 ```
-Modify the configuration section at the begining of **tgcount.py** to match with your configuration, you can use the editor of your preference.  
+Modify the configuration in **config.py** to match your system configuration, you can use the editor of your preference.  
 ```
-sudo nano tgcount.py
+sudo nano config.py
 ``` 
 If you have the download files enabled on the FreeDMR server, set the DOWNLOAD_FILES to False.  
 >DOWNLOAD_FILES = False
@@ -68,10 +69,11 @@ Now the installation is completed, thank you for install this script any feedbac
 cd /opt    
 sudo git clone https://github.com/yuvelq/TG_Count.git  
 cd TG_Count
+cp config.sample.py config.py
 ```
-Modifica la sección de configuración al inicio de **tgcount.py** para que se adapten a tu sistema, puedes utilizar un editor de texto de tu preferencia.  
+Modifica la sección de configuración al inicio de **config.py** para que se adapte a tu sistema, puedes utilizar un editor de texto de tu preferencia.  
 ```
-sudo nano tgcount.py
+sudo nano config.py
 ``` 
 Si tienes activada la opción de descarga en el servidor FreeDMR, cambia la opción DOWNLOAD_FILES a False.
 >DOWNLOAD_FILES = False
