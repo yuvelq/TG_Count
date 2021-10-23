@@ -221,8 +221,8 @@ while True:
     with open(TG_NAME_URL.split('/')[-1], encoding='utf-8') as tg_json:
         data_tgjson = jload(tg_json)
         for tg_id in data_tgjson["results"]:
-            if tg_id['id'] in final_tg and 'tg_name' not in tg_count[tg_id['id']] :
-                tg_count[tg_id['id']]['tg_name'] = tg_id['callsign']
+            if tg_id['tgid'] in final_tg and 'tg_name' not in tg_count[tg_id['tgid']] :
+                tg_count[tg_id['tgid']]['tg_name'] = tg_id['callsign']
         del data_tgjson
 
     try:
