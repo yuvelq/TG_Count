@@ -150,8 +150,8 @@ while True:
                     line_split = line.rstrip().split()
                     if line_split[1] != today: continue
                     if line_split[11][1:-1] in VANISH: continue
-                    tg_number = int(line_split[-5][1:-2])
-                    qso_time = float(line_split[-1])
+                    tg_number = int(line_split[-8][1:-2])
+                    qso_time = float(line_split[-4][:-1])
                     if qso_time < 6 : continue
                     call_id = line_split[10]
                     if call_id.isdigit():
