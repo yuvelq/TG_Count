@@ -62,7 +62,7 @@ def file_update(url,update):
                 global id_dict
                 id_dict = {}
             elif r.status_code == 404:
-                print(f"We couldn't find {file_name} in the especified URL.")
+                print(f"We couldn't find {file} in the especified URL.")
                 quit()
             else:
                 print(f'{r.status_code}\nWe found an unexpected error.')
@@ -150,13 +150,17 @@ while True:
                     line_split = line.rstrip().split()
                     if line_split[1] != today: continue
                     if line_split[11][1:-1] in VANISH: continue
-                    tg_number = int(line_split[-8][1:-2])
-                    qso_time = float(line_split[-4][:-1])
+                    if line_split[-3] == 'Packet':
+                        tg_number = int(line_split[-8][1:-2])
+                        qso_time = float(line_split[-4][:-1])
+                        print(tg_number, qso_time)
+                    else:
+                        tg_number = int(line_split[-5][1:-2])
+                        qso_time = float(line_split[-1])
                     if qso_time < 6 : continue
                     call_id = line_split[10]
                     if call_id.isdigit():
                         call_id = int(line_split[10])
-
 
                 if tg_number not in tg_count :
                     tg_count[tg_number] = {'count':1, 'qso_count':qso_time, 'call_sign':{}}
