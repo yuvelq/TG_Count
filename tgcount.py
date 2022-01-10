@@ -153,7 +153,6 @@ while True:
                     if line_split[-3] == 'Packet':
                         tg_number = int(line_split[-8][1:-2])
                         qso_time = float(line_split[-4][:-1])
-                        print(tg_number, qso_time)
                     else:
                         tg_number = int(line_split[-5][1:-2])
                         qso_time = float(line_split[-1])
