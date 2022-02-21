@@ -150,13 +150,18 @@ while True:
                     line_split = line.rstrip().split()
                     if line_split[1] != today: continue
                     if line_split[11][1:-1] in VANISH: continue
-                    if line_split[-3] == 'Packet':
-                        tg_number = int(line_split[-8][1:-2])
-                        qso_time = float(line_split[-4][:-1])
-                    else:
-                        tg_number = int(line_split[-5][1:-2])
-                        qso_time = float(line_split[-1])
+                    try:
+                        if line_split[-3] == 'Packet':
+                            tg_number = int(line_split[-12][1:-2])
+                            qso_time = float(line_split[-1][:-2])
+                        else:
+                            tg_number = int(line_split[-5][1:-2])
+                            qso_time = float(line_split[-1])
+                    except Exception as err:
+                        print(f'Unrecognized log format, skipping this line:\n {err}')
+                        continue
                     if qso_time < 6 : continue
+
                     call_id = line_split[10]
                     if call_id.isdigit():
                         call_id = int(line_split[10])
