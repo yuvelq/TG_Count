@@ -149,20 +149,20 @@ while True:
                     if '*CALL END*' not in line: continue
                     line_split = line.rstrip().split()
                     if line_split[1] != today: continue
-                    if line_split[11][1:-1] in VANISH: continue
+                    if int(line_split[line_split.index("SUB:") + 2][1:-1]) in VANISH:
+                        continue
                     try:
-                        tg_number = int(line_split[-8][1:-2])
-                        qso_time = float(line_split[-1][:-2])
+                        qso_time = float(line_split[line_split.index("Duration:") + 1][:-1])
+                        if qso_time < 6:
+                            continue
+                        tg_number = int(line_split[line_split.index("TS") - 1][1:-2])
+                        call_id = line_split[line_split.index("SUB:") + 1]
+                        if call_id.isdigit():
+                            call_id = int(call_id)
 
                     except Exception as err:
                         print(f'Unrecognized log format:\n{err}\n{line}')
                         continue
-
-                    if qso_time < 6 : continue
-
-                    call_id = line_split[10]
-                    if call_id.isdigit():
-                        call_id = int(line_split[10])
 
                 if tg_number not in tg_count :
                     tg_count[tg_number] = {'count':1, 'qso_count':qso_time, 'call_sign':{}}
